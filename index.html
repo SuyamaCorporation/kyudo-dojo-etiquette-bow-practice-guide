@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>弓道 道場礼法・行射工程ガイド</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  .tab-active { border-bottom: 3px solid #1e3a5f; color: #1e3a5f; font-weight: 700; }
+  .tab-inactive { color: #6b7280; border-bottom: 3px solid transparent; }
+  details > summary { list-style: none; }
+  details > summary::-webkit-details-marker { display: none; }
+  details[open] .chevron { transform: rotate(180deg); }
+  .chevron { transition: transform 0.2s; display: inline-block; }
+  .step-check:checked + label { text-decoration: line-through; color: #9ca3af; }
+  .grade-row:nth-child(odd) { background-color: #f8fafc; }
+</style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+<header class="bg-blue-950 text-white py-4 px-4 shadow-md">
+  <div class="max-w-2xl mx-auto">
+    <h1 class="text-xl font-bold">🏹 弓道 道場礼法・行射工程ガイド</h1>
+    <p class="text-blue-200 text-sm mt-1">礼法・射法八節・審査基準をまとめて確認</p>
+  </div>
+</header>
+
+<main class="max-w-2xl mx-auto px-4 py-4">
+
+  <!-- タブナビゲーション -->
+  <nav class="flex border-b border-gray-300 mb-6" role="tablist" aria-label="セクション選択">
+    <button role="tab" aria-selected="true" aria-controls="tab-reihoh" id="btn-reihoh"
+      class="flex-1 py-3 text-sm tab-active transition" data-tab="reihoh">
+      礼法
+    </button>
+    <button role="tab" aria-selected="false" aria-controls="tab-shahho" id="btn-shahho"
+      class="flex-1 py-3 text-sm tab-inactive transition" data-tab="shahho">
+      射法八節
+    </button>
+    <button role="tab" aria-selected="false" aria-controls="tab-shinsai" id="btn-shinsai"
+      class="flex-1 py-3 text-sm tab-inactive transition" data-tab="shinsai">
+      審査基準
+    </button>
+  </nav>
+
+  <!-- 礼法タブ -->
+  <section id="tab-reihoh" role="tabpanel" aria-labelledby="btn-reihoh">
+
+    <!-- 立礼 -->
+    <div class="bg-white rounded-xl shadow-sm p-5 mb-4">
+      <h2 class="font-bold text-blue-950 text-lg mb-4">🧍 立礼（りゅうれい）チェックリスト</h2>
+      <fieldset>
+        <legend class="sr-only">立礼の手順確認</legend>
+        <ol class="space-y-2" id="tachrei-list"></ol>
+      </fieldset>
+    </div>
+
+    <!-- 座礼 -->
+    <div class="bg-white rounded-xl shadow-sm p-5 mb-4">
+      <h2 class="font-bold text-blue-950 text-lg mb-4">🧎 座礼（ざれい）チェックリスト</h2>
+      <fieldset>
+        <legend class="sr-only">座礼の手順確認</legend>
+        <ol class="space-y-2" id="zarei-list"></ol>
+      </fieldset>
+    </div>
+
+    <!-- 道場入退出 -->
+    <div class="bg-white rounded-xl shadow-sm p-5">
+      <h2 class="font-bold text-blue-950 text-lg mb-4">🚪 道場入退出の礼法</h2>
+      <fieldset>
+        <legend class="sr-only">道場入退出の手順確認</legend>
+        <ol class="space-y-2" id="dojo-list"></ol>
+      </fieldset>
+    </div>
+
+    <button id="reset-reihoh" class="mt-4 w-full bg-gray-200 text-gray-700 py-2 rounded-lg text-sm hover:bg-gray-300 transition">
+      チェックをリセット
+    </button>
+  </section>
+
+  <!-- 射法八節タブ -->
+  <section id="tab-shahho" role="tabpanel" aria-labelledby="btn-shahho" class="hidden">
+    <div class="space-y-3" id="shahho-list"></div>
+    <button id="reset-shahho" class="mt-4 w-full bg-gray-200 text-gray-700 py-2 rounded-lg text-sm hover:bg-gray-300 transition">
+      練習チェックをリセット
+    </button>
+  </section>
+
+  <!-- 審査基準タブ -->
+  <section id="tab-shinsai" role="tabpanel" aria-labelledby="btn-shinsai" class="hidden">
+    <div class="bg-white rounded-xl shadow-sm p-5 mb-4">
+      <h2 class="font-bold text-blue-950 text-lg mb-4">📋 段級別審査基準</h2>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="bg-blue-950 text-white">
+              <th class="text-left p-3 rounded-tl-lg">段位</th>
+              <th class="text-left p-3">必要条件</th>
+              <th class="text-left p-3 rounded-tr-lg">審査内容</th>
+            </tr>
+          </thead>
+          <tbody id="grade-table-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 自己評価チェックリスト -->
+    <div class="bg-white rounded-xl shadow-sm p-5 mb-4">
+      <h2 class="font-bold text-blue-950 text-lg mb-3">✅ 段位別 自己評価チェックリスト</h2>
+      <div class="mb-3">
+        <label for="grade-select" class="text-sm text-gray-600 font-medium">目標段位を選択</label>
+        <select id="grade-select" class="mt-1 block w-full border border-gray-300 rounded-lg p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </select>
+      </div>
+      <fieldset>
+        <legend class="sr-only">自己評価チェックリスト</legend>
+        <ol id="self-check-list" class="space-y-2 mt-3"></ol>
+      </fieldset>
+    </div>
+
+    <button id="reset-shinsai" class="mt-2 w-full bg-gray-200 text-gray-700 py-2 rounded-lg text-sm hover:bg-gray-300 transition">
+      チェックをリセット
+    </button>
+  </section>
+
+</main>
+
+<script>
+// ===== データ =====
+const TACHREI_STEPS = [
+  '上体を真っすぐ保ち、足を揃えて起立する',
+  '視線を相手の目から少し下（首〜胸）に向ける',
+  '上体を腰から15〜30度前に傾ける（深礼は45度）',
+  '一瞬静止してから、ゆっくり上体を起こす',
+  '相手が礼をしている間は視線をそのまま保つ',
+  '起立した姿勢に戻り、相手と目を合わせる',
+];
+
+const ZAREI_STEPS = [
+  '両膝を揃えて正座する（背筋を伸ばす）',
+  '両手を腿の上に置き、指をそろえる',
+  '視線は斜め前方（約1mほど先）に向ける',
+  '上体を腰から傾けながら、両手を膝前の畳に滑らせる',
+  '指先が揃った状態で静止（額が手のやや上方に来る位置）',
+  'ゆっくりと上体を起こし、手を腿の上に戻す',
+  '正座の姿勢に戻り、一礼の完了',
+];
+
+const DOJO_STEPS = [
+  '入口で立礼（道場の神棚・的に向かって）',
+  '弓を携帯するときは矢を外し先を上にする',
+  '道場内では静粛を保ち、私語を慎む',
+  '射場（射位）では指定された順序・礼法に従う',
+  '先輩の行射中は後方で静かに待機する',
+  '退場前に射場を清掃し、使用した矢を整える',
+  '退出時に入口で道場に向かい立礼をする',
+];
+
+const SHAHHO_STEPS = [
+  {
+    num: '01', name: '足踏み', yomi: 'あしぶみ',
+    desc: '両足を的に向かって60度に開く。足の幅は矢束（やつか）とほぼ同じ。左右対称に。',
+    mistakes: '・足が狭すぎると体が不安定になる\n・足先の角度が左右非対称になる',
+    checks: ['左右の足先の角度が均等か', '重心が両足に均等にかかっているか', '矢束の幅を目安に足の間隔を確認'],
+  },
+  {
+    num: '02', name: '胴造り', yomi: 'どうづくり',
+    desc: '足踏みの上に腰・体幹を安定させる。上体をわずかに前傾し、頭部を真っすぐ保つ。',
+    mistakes: '・腰が反りすぎる（後傾）\n・肩に力が入る\n・視線が下がる',
+    checks: ['腰が地面と平行か', '両肩が水平か', '頭部が自然に真っすぐか'],
+  },
+  {
+    num: '03', name: '弓構え', yomi: 'ゆがまえ',
+    desc: '弓を持つ手の形と矢をつがえる動作。物見（顔を的に向ける）もこの段階で行う。',
+    mistakes: '・物見が浅い（顔が向かない）\n・取り懸けの指の掛け方が不均一\n・弓と矢が体から離れすぎる',
+    checks: ['物見が自然にできているか', '取り懸け（かけ）の形が正しいか', '弓が体に対し正しい角度か'],
+  },
+  {
+    num: '04', name: '打起し', yomi: 'うちおこし',
+    desc: '弓を真上に挙げる動作。高さは額の上10〜15cm程度。左右の腕が均等に上がること。',
+    mistakes: '・片方の腕だけで上げる\n・弓が前後に傾く\n・肩が上がる（すくむ）',
+    checks: ['両腕が均等に持ち上がるか', '弓の傾きはないか', '肩が上がっていないか'],
+  },
+  {
+    num: '05', name: '引分け', yomi: 'ひきわけ',
+    desc: '打起した弓を左右均等に引き分ける。体の中心線に向けて弦を引き、腕・肩・胸を使う。',
+    mistakes: '・右腕だけで引く（左手の押しが弱い）\n・肘が下がる\n・体が弓に引っ張られ前傾する',
+    checks: ['左右均等に引き分けているか', '肘の位置が正しいか', '体の軸がぶれていないか'],
+  },
+  {
+    num: '06', name: '会', yomi: 'かい',
+    desc: '十分に引き分け、会の状態（持満）を保つ。勝手（右手）の肘が肩より高い位置で保持。',
+    mistakes: '・会の時間が短すぎる（急ぎの離れ）\n・力を抜いて形だけになる\n・体が前後に揺れる',
+    checks: ['十分な時間（3〜5秒）会を保てるか', '勝手の肘が水平より高い位置か', '心身ともに安定しているか'],
+  },
+  {
+    num: '07', name: '離れ', yomi: 'はなれ',
+    desc: '気合の発露として自然に離れる。意識的に手を開くのでなく、引き分けの延長で自然に。',
+    mistakes: '・狙いを定めてから意識的に離す\n・右腕が前に出る（前離れ）\n・左手が動く（押手が崩れる）',
+    checks: ['自然に離れているか', '押手（左手）が動いていないか', '離れ後の形が整っているか'],
+  },
+  {
+    num: '08', name: '残身', yomi: 'ざんしん',
+    desc: '離れの後の姿勢。射の結果として自然に現れる形。左右に均等に腕が開いた状態で保つ。',
+    mistakes: '・すぐに体を崩す\n・左右が不均等に広がる\n・視線が矢の行方を追いすぎる',
+    checks: ['離れ後も数秒姿勢を保てるか', '左右の腕が均等な高さか', '視線が的の方向を向いているか'],
+  },
+];
+
+const GRADES = [
+  {
+    grade: '初段',
+    requirement: '6ヶ月以上修行・審査合格',
+    exam: '体配（立射）・正面打起し・4本（2射2本立）',
+    checks: [
+      '立礼・座礼が正しくできる',
+      '足踏みが左右対称60度にできる',
+      '引分け〜会〜離れの流れが途切れない',
+      '残身が整っている',
+      '矢所が的中付近に収まる（中らなくても可）',
+    ],
+  },
+  {
+    grade: '弐段',
+    requirement: '初段取得後1年以上・審査合格',
+    exam: '体配（立射）・正面打起し・4本',
+    checks: [
+      '礼射の体配が全て正確にできる',
+      '射法八節が一連の流れとして習熟している',
+      '射形が安定して再現できる',
+      '矢飛びが安定している',
+      '道場での立ち居振る舞いが適切',
+    ],
+  },
+  {
+    grade: '参段',
+    requirement: '弐段取得後1年以上・審査合格',
+    exam: '体配・正面打起し・4本（審査員の視点が高まる）',
+    checks: [
+      '射技・体配に一貫性がある',
+      '自分の射の弱点を把握し改善できる',
+      '気息（呼吸）が射に統合されている',
+      '後輩への指導補助ができる',
+      '射に「ゆとり」が出てきている',
+    ],
+  },
+  {
+    grade: '四段',
+    requirement: '参段取得後2年以上・審査合格',
+    exam: '体配・正面打起し・4本（射技と体配の高度な統合）',
+    checks: [
+      '射技が体配と完全に統合されている',
+      '射法八節が「体の一部」になっている',
+      '指導者として後輩を教えられる',
+      '離れが「自然」に近づいている',
+      '射に哲学・精神性が感じられる',
+    ],
+  },
+  {
+    grade: '五段',
+    requirement: '四段取得後3年以上・審査合格',
+    exam: '体配・正面打起し・4本（高段審査・多角的評価）',
+    checks: [
+      '射技・礼法・精神性が高次元で統合されている',
+      '道（どう）としての弓道の哲学を体現している',
+      '地域の弓道会で中核的役割を担える',
+      '後進の育成に主体的に取り組んでいる',
+      '射が「道」の実践として認められる',
+    ],
+  },
+];
+
+// ===== ローカルストレージキー =====
+const LS_REIHOH = 'kyudo-reihoh-checks';
+const LS_SHAHHO = 'kyudo-shahho-checks';
+const LS_SHINSAI = 'kyudo-shinsai-checks';
+
+function loadChecks(key) {
+  try { return JSON.parse(localStorage.getItem(key) || '{}'); } catch { return {}; }
+}
+function saveChecks(key, data) {
+  try { localStorage.setItem(key, JSON.stringify(data)); } catch {}
+}
+
+// ===== チェックリスト構築 =====
+function buildCheckList(containerId, steps, storageKey, prefix) {
+  const container = document.getElementById(containerId);
+  const saved = loadChecks(storageKey);
+
+  steps.forEach((step, i) => {
+    const li = document.createElement('li');
+    li.className = 'flex items-start gap-2';
+
+    const id = `${prefix}-${i}`;
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.id = id;
+    checkbox.className = 'step-check mt-0.5 w-4 h-4 accent-blue-700 flex-shrink-0';
+    checkbox.checked = saved[id] === true;
+
+    const label = document.createElement('label');
+    label.htmlFor = id;
+    label.className = 'text-sm text-gray-700 cursor-pointer';
+    if (checkbox.checked) label.style.textDecoration = 'line-through';
+
+    const num = document.createElement('span');
+    num.className = 'font-bold text-blue-700 mr-1';
+    num.textContent = (i + 1) + '.';
+    label.appendChild(num);
+    label.appendChild(document.createTextNode(step));
+
+    checkbox.addEventListener('change', () => {
+      const checks = loadChecks(storageKey);
+      checks[id] = checkbox.checked;
+      saveChecks(storageKey, checks);
+      label.style.textDecoration = checkbox.checked ? 'line-through' : '';
+    });
+
+    li.appendChild(checkbox);
+    li.appendChild(label);
+    container.appendChild(li);
+  });
+}
+
+// ===== 射法八節 =====
+function buildShahho() {
+  const container = document.getElementById('shahho-list');
+  const saved = loadChecks(LS_SHAHHO);
+
+  SHAHHO_STEPS.forEach(step => {
+    const article = document.createElement('article');
+    article.className = 'bg-white rounded-xl shadow-sm overflow-hidden';
+
+    const details = document.createElement('details');
+    const summary = document.createElement('summary');
+    summary.className = 'flex items-center gap-3 p-4 cursor-pointer hover:bg-blue-50 transition';
+
+    const numBadge = document.createElement('span');
+    numBadge.className = 'bg-blue-950 text-white text-xs font-bold px-2 py-1 rounded-full flex-shrink-0';
+    numBadge.textContent = step.num;
+
+    const nameDiv = document.createElement('div');
+    nameDiv.className = 'flex-1';
+    const h3 = document.createElement('h3');
+    h3.className = 'font-bold text-blue-950';
+    h3.textContent = step.name;
+    const yomi = document.createElement('span');
+    yomi.className = 'text-xs text-gray-500 ml-1';
+    yomi.textContent = '（' + step.yomi + '）';
+    h3.appendChild(yomi);
+    nameDiv.appendChild(h3);
+
+    const chevron = document.createElement('span');
+    chevron.className = 'chevron text-gray-400 text-sm';
+    chevron.setAttribute('aria-hidden', 'true');
+    chevron.textContent = '▼';
+
+    summary.appendChild(numBadge);
+    summary.appendChild(nameDiv);
+    summary.appendChild(chevron);
+    details.appendChild(summary);
+
+    // 詳細コンテンツ
+    const body = document.createElement('div');
+    body.className = 'px-4 pb-4 border-t border-gray-100';
+
+    const descP = document.createElement('p');
+    descP.className = 'text-sm text-gray-700 mt-3';
+    descP.textContent = step.desc;
+    body.appendChild(descP);
+
+    const mistakeDiv = document.createElement('div');
+    mistakeDiv.className = 'mt-3 bg-red-50 rounded-lg p-3';
+    const mistakeH = document.createElement('p');
+    mistakeH.className = 'text-xs font-bold text-red-700 mb-1';
+    mistakeH.textContent = '❌ よくある間違い';
+    const mistakeText = document.createElement('p');
+    mistakeText.className = 'text-xs text-red-600 whitespace-pre-line';
+    mistakeText.textContent = step.mistakes;
+    mistakeDiv.appendChild(mistakeH);
+    mistakeDiv.appendChild(mistakeText);
+    body.appendChild(mistakeDiv);
+
+    const checksDiv = document.createElement('div');
+    checksDiv.className = 'mt-3';
+    const checksH = document.createElement('p');
+    checksH.className = 'text-xs font-bold text-green-700 mb-2';
+    checksH.textContent = '✅ チェックポイント';
+    checksDiv.appendChild(checksH);
+
+    const fieldset = document.createElement('fieldset');
+    const legend = document.createElement('legend');
+    legend.className = 'sr-only';
+    legend.textContent = step.name + 'の練習チェックリスト';
+    fieldset.appendChild(legend);
+
+    step.checks.forEach((check, ci) => {
+      const li = document.createElement('div');
+      li.className = 'flex items-start gap-2 mb-1';
+      const id = `shahho-${step.num}-${ci}`;
+      const cb = document.createElement('input');
+      cb.type = 'checkbox';
+      cb.id = id;
+      cb.className = 'w-4 h-4 accent-green-700 mt-0.5 flex-shrink-0';
+      cb.checked = saved[id] === true;
+
+      const lbl = document.createElement('label');
+      lbl.htmlFor = id;
+      lbl.className = 'text-sm text-gray-700 cursor-pointer';
+      if (cb.checked) lbl.style.textDecoration = 'line-through';
+      lbl.textContent = check;
+
+      cb.addEventListener('change', () => {
+        const s = loadChecks(LS_SHAHHO);
+        s[id] = cb.checked;
+        saveChecks(LS_SHAHHO, s);
+        lbl.style.textDecoration = cb.checked ? 'line-through' : '';
+      });
+
+      li.appendChild(cb);
+      li.appendChild(lbl);
+      fieldset.appendChild(li);
+    });
+    checksDiv.appendChild(fieldset);
+    body.appendChild(checksDiv);
+    details.appendChild(body);
+    article.appendChild(details);
+    container.appendChild(article);
+  });
+}
+
+// ===== 審査基準 =====
+function buildGradeTable() {
+  const tbody = document.getElementById('grade-table-body');
+  GRADES.forEach((g, i) => {
+    const tr = document.createElement('tr');
+    tr.className = 'grade-row border-t border-gray-200';
+
+    const tdGrade = document.createElement('td');
+    tdGrade.className = 'p-3 font-bold text-blue-950 whitespace-nowrap';
+    tdGrade.textContent = g.grade;
+
+    const tdReq = document.createElement('td');
+    tdReq.className = 'p-3 text-xs text-gray-700';
+    tdReq.textContent = g.requirement;
+
+    const tdExam = document.createElement('td');
+    tdExam.className = 'p-3 text-xs text-gray-700';
+    tdExam.textContent = g.exam;
+
+    tr.appendChild(tdGrade);
+    tr.appendChild(tdReq);
+    tr.appendChild(tdExam);
+    tbody.appendChild(tr);
+  });
+}
+
+function buildGradeSelect() {
+  const select = document.getElementById('grade-select');
+  GRADES.forEach((g, i) => {
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = g.grade;
+    select.appendChild(opt);
+  });
+  select.addEventListener('change', () => buildSelfCheckList(parseInt(select.value)));
+  buildSelfCheckList(0);
+}
+
+function buildSelfCheckList(gradeIdx) {
+  const container = document.getElementById('self-check-list');
+  container.innerHTML = '';
+  const grade = GRADES[gradeIdx];
+  const saved = loadChecks(LS_SHINSAI + '-' + gradeIdx);
+
+  grade.checks.forEach((check, i) => {
+    const li = document.createElement('li');
+    li.className = 'flex items-start gap-2';
+
+    const id = `shinsai-${gradeIdx}-${i}`;
+    const cb = document.createElement('input');
+    cb.type = 'checkbox';
+    cb.id = id;
+    cb.className = 'w-4 h-4 accent-blue-700 mt-0.5 flex-shrink-0';
+    cb.checked = saved[id] === true;
+
+    const lbl = document.createElement('label');
+    lbl.htmlFor = id;
+    lbl.className = 'text-sm text-gray-700 cursor-pointer';
+    if (cb.checked) lbl.style.textDecoration = 'line-through';
+    lbl.textContent = check;
+
+    cb.addEventListener('change', () => {
+      const s = loadChecks(LS_SHINSAI + '-' + gradeIdx);
+      s[id] = cb.checked;
+      saveChecks(LS_SHINSAI + '-' + gradeIdx, s);
+      lbl.style.textDecoration = cb.checked ? 'line-through' : '';
+    });
+
+    li.appendChild(cb);
+    li.appendChild(lbl);
+    container.appendChild(li);
+  });
+}
+
+// ===== タブ切り替え =====
+function setupTabs() {
+  const tabs = document.querySelectorAll('[role="tab"]');
+  const panels = { reihoh: document.getElementById('tab-reihoh'), shahho: document.getElementById('tab-shahho'), shinsai: document.getElementById('tab-shinsai') };
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const target = tab.dataset.tab;
+      tabs.forEach(t => {
+        t.classList.remove('tab-active');
+        t.classList.add('tab-inactive');
+        t.setAttribute('aria-selected', 'false');
+      });
+      tab.classList.add('tab-active');
+      tab.classList.remove('tab-inactive');
+      tab.setAttribute('aria-selected', 'true');
+      Object.entries(panels).forEach(([k, el]) => {
+        el.classList.toggle('hidden', k !== target);
+      });
+    });
+  });
+}
+
+// ===== リセット =====
+function setupResets() {
+  document.getElementById('reset-reihoh').addEventListener('click', () => {
+    localStorage.removeItem(LS_REIHOH);
+    document.querySelectorAll('#tab-reihoh input[type="checkbox"]').forEach(cb => {
+      cb.checked = false;
+      const lbl = document.querySelector('label[for="' + cb.id + '"]');
+      if (lbl) lbl.style.textDecoration = '';
+    });
+  });
+
+  document.getElementById('reset-shahho').addEventListener('click', () => {
+    localStorage.removeItem(LS_SHAHHO);
+    document.querySelectorAll('#shahho-list input[type="checkbox"]').forEach(cb => {
+      cb.checked = false;
+      const lbl = document.querySelector('label[for="' + cb.id + '"]');
+      if (lbl) lbl.style.textDecoration = '';
+    });
+  });
+
+  document.getElementById('reset-shinsai').addEventListener('click', () => {
+    GRADES.forEach((_, i) => localStorage.removeItem(LS_SHINSAI + '-' + i));
+    buildSelfCheckList(parseInt(document.getElementById('grade-select').value));
+  });
+}
+
+// ===== 初期化 =====
+buildCheckList('tachrei-list', TACHREI_STEPS, LS_REIHOH, 'tachrei');
+buildCheckList('zarei-list', ZAREI_STEPS, LS_REIHOH, 'zarei');
+buildCheckList('dojo-list', DOJO_STEPS, LS_REIHOH, 'dojo');
+buildShahho();
+buildGradeTable();
+buildGradeSelect();
+setupTabs();
+setupResets();
+</script>
+</body>
+</html>
